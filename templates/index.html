@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FitBuddy - AI Fitness & Workout Plan Generator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #070a12;
+            --card-bg: rgba(15, 23, 42, 0.85);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent-green: #10b981;
+            --accent-cyan: #06b6d4;
+            --accent-orange: #f97316;
+            --accent-purple: #8b5cf6;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(ellipse 80% 50% at 50% -20%, rgba(16, 185, 129, 0.15), transparent),
+                radial-gradient(ellipse 60% 40% at 90% 80%, rgba(6, 182, 212, 0.1), transparent);
+            color: var(--text-main);
+            font-family: 'Outfit', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.6rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: var(--text-main);
+            text-decoration: none;
+        }
+
+        .logo span {
+            background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #10b981, #06b6d4);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+
+        nav a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            padding: 0.6rem 1.2rem;
+            border-radius: 10px;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+
+        nav a:hover {
+            color: var(--text-main);
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .hero-container {
+            max-width: 900px;
+            margin: 3rem auto;
+            padding: 0 1.5rem;
+            width: 100%;
+        }
+
+        .hero-title {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .hero-title h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            line-height: 1.15;
+            margin-bottom: 0.8rem;
+            letter-spacing: -0.03em;
+        }
+
+        .hero-title h1 .gradient-text {
+            background: linear-gradient(135deg, #10b981 0%, #38bdf8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-title p {
+            color: var(--text-muted);
+            font-size: 1.15rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            padding: 2.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(16px);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+
+        label {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 0.9rem 1.2rem;
+            font-size: 1rem;
+            font-weight: 500;
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            background: rgba(7, 10, 18, 0.75);
+            color: var(--text-main);
+            font-family: inherit;
+            transition: all 0.2s ease;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent-green);
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.15);
+            background: rgba(15, 23, 42, 0.9);
+        }
+
+        .id-input-wrapper {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-gen-id {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: var(--text-main);
+            padding: 0 1rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+
+        .btn-gen-id:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .submit-btn {
+            grid-column: span 2;
+            margin-top: 1rem;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: #022c22;
+            font-size: 1.1rem;
+            font-weight: 700;
+            padding: 1.1rem;
+            border-radius: 16px;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+            box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.4);
+            transition: all 0.25s ease;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px -5px rgba(16, 185, 129, 0.6);
+            background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+        }
+
+        .error-alert {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+            padding: 1rem 1.2rem;
+            border-radius: 14px;
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-top: 3rem;
+        }
+
+        .feature-card {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 1.5rem;
+            border-radius: 18px;
+            text-align: center;
+        }
+
+        .feature-icon {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 0.4rem;
+        }
+
+        .feature-card p {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+        }
+
+        footer {
+            margin-top: auto;
+            padding: 2rem;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.88rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            .form-group.full-width, .submit-btn {
+                grid-column: span 1;
+            }
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            .hero-title h1 {
+                font-size: 2.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="/" class="logo">
+            <div class="logo-icon">⚡</div>
+            <div>Fit<span>Buddy</span></div>
+        </a>
+        <nav>
+            <a href="/view-all-users">📊 Admin Dashboard</a>
+        </nav>
+    </header>
+
+    <main class="hero-container">
+        <div class="hero-title">
+            <h1>AI-Powered <span class="gradient-text">Fitness & Nutrition</span> Architect</h1>
+            <p>Generate personalized 7-day workout plans, custom nutrition protocols, and adaptive revisions powered by Google Gemini 1.5 Pro & Flash.</p>
+        </div>
+
+        {% if error %}
+        <div class="error-alert">
+            ⚠️ <span>{{ error }}</span>
+        </div>
+        {% endif %}
+
+        <div class="card">
+            <form action="/generate-workout" method="POST" class="form-grid">
+                
+                <div class="form-group">
+                    <label for="username">Full Name / Username</label>
+                    <input type="text" id="username" name="username" placeholder="e.g. Alex Mercer" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="user_id">User ID (Unique Identifier)</label>
+                    <div class="id-input-wrapper">
+                        <input type="text" id="user_id" name="user_id" placeholder="e.g. alex_88" required>
+                        <button type="button" class="btn-gen-id" onclick="generateRandomId()">Random</button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="age">Age (Years)</label>
+                    <input type="number" id="age" name="age" min="14" max="100" placeholder="e.g. 28" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="weight">Weight (kg)</label>
+                    <input type="number" step="0.1" id="weight" name="weight" min="30" max="300" placeholder="e.g. 75.5" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="goal">Primary Fitness Goal</label>
+                    <select id="goal" name="goal" required>
+                        <option value="Muscle Building & Hypertrophy">💪 Muscle Building & Hypertrophy</option>
+                        <option value="Weight Loss & Fat Burning">🔥 Weight Loss & Fat Burning</option>
+                        <option value="Strength & Power Powerlifting">🏋️ Heavy Strength & Powerlifting</option>
+                        <option value="Athletic Conditioning & Endurance">🏃 Athletic Conditioning & Endurance</option>
+                        <option value="Full-Body Toning & General Health">✨ Full-Body Toning & Mobility</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="intensity">Training Intensity Level</label>
+                    <select id="intensity" name="intensity" required>
+                        <option value="Beginner (3 Days/Week)">🌱 Beginner (3 Days / Week)</option>
+                        <option value="Intermediate (4-5 Days/Week)" selected>⚡ Intermediate (4-5 Days / Week)</option>
+                        <option value="Advanced (5-6 Days/Week)">🔥 Advanced (5-6 Days / Week)</option>
+                        <option value="Elite / High Intensity">🚀 Elite Athlete (High Intensity)</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="submit-btn">
+                    <span>⚡ Generate 7-Day AI Workout Plan</span>
+                </button>
+            </form>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🤖</div>
+                <h3>Gemini 1.5 Pro</h3>
+                <p>Generates detailed 7-day exercise split routines with warmups, reps, and cooldowns.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3>Gemini 1.5 Flash</h3>
+                <p>Delivers targeted nutrition, hydration, and recovery protocols instantly.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔄</div>
+                <h3>Adaptive AI Feedback</h3>
+                <p>Revise your plan at any time based on injuries, equipment, or schedule changes.</p>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 FitBuddy AI. Powered by FastAPI, SQLAlchemy & Google Gemini AI.</p>
+    </footer>
+
+    <script>
+        function generateRandomId() {
+            const randomNum = Math.floor(1000 + Math.random() * 9000);
+            const usernameVal = document.getElementById('username').value.trim();
+            let prefix = "user";
+            if (usernameVal) {
+                prefix = usernameVal.toLowerCase().replace(/[^a-z0-9]/g, '').substring(0, 8);
+            }
+            document.getElementById('user_id').value = `${prefix}_${randomNum}`;
+        }
+    </script>
+</body>
+</html>

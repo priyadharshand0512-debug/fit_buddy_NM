@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FitBuddy - Admin Dashboard (All Users)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #070a12;
+            --card-bg: rgba(15, 23, 42, 0.85);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent-green: #10b981;
+            --accent-cyan: #06b6d4;
+            --accent-orange: #f97316;
+            --accent-purple: #8b5cf6;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.08), transparent 40%),
+                radial-gradient(circle at 20% 80%, rgba(16, 185, 129, 0.08), transparent 40%);
+            color: var(--text-main);
+            font-family: 'Outfit', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--text-main);
+            text-decoration: none;
+        }
+
+        .logo span {
+            background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #10b981, #06b6d4);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .nav-link {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            padding: 0.6rem 1.2rem;
+            border-radius: 10px;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+
+        .nav-link:hover {
+            color: var(--text-main);
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .container {
+            max-width: 1150px;
+            margin: 2.5rem auto;
+            padding: 0 1.5rem;
+            width: 100%;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .dashboard-title h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+        }
+
+        .dashboard-title p {
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+
+        .stat-counter {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #6ee7b7;
+            padding: 0.8rem 1.4rem;
+            border-radius: 16px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .users-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .user-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 1.8rem;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(12px);
+            transition: all 0.2s ease;
+        }
+
+        .user-card:hover {
+            border-color: rgba(16, 185, 129, 0.25);
+        }
+
+        .user-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1.2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .user-main-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .avatar-small {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, #10b981, #06b6d4);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1.2rem;
+            color: #022c22;
+        }
+
+        .user-name-id h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .user-name-id p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .user-meta-tags {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 0.3rem 0.8rem;
+            border-radius: 10px;
+            font-size: 0.82rem;
+            font-weight: 600;
+        }
+
+        .tag.goal-tag {
+            background: rgba(6, 182, 212, 0.15);
+            border-color: rgba(6, 182, 212, 0.3);
+            color: #67e8f9;
+        }
+
+        .plans-accordion {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.2rem;
+            margin-top: 1rem;
+        }
+
+        @media (max-width: 900px) {
+            .plans-accordion {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .plan-box {
+            background: rgba(7, 10, 18, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            padding: 1.2rem;
+        }
+
+        .plan-box-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .plan-box-title .badge-mini {
+            font-size: 0.7rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 12px;
+            font-weight: 700;
+        }
+
+        .badge-original {
+            background: rgba(16, 185, 129, 0.2);
+            color: #34d399;
+        }
+
+        .badge-updated {
+            background: rgba(249, 115, 22, 0.2);
+            color: #fb923c;
+        }
+
+        .plan-text-preview {
+            max-height: 250px;
+            overflow-y: auto;
+            font-size: 0.88rem;
+            line-height: 1.6;
+            color: #cbd5e1;
+            white-space: pre-wrap;
+            padding-right: 0.5rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+        }
+
+        .empty-state h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-state p {
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+        }
+
+        footer {
+            margin-top: auto;
+            padding: 2rem;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.88rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="/" class="logo">
+            <div class="logo-icon">⚡</div>
+            <div>Fit<span>Buddy</span></div>
+        </a>
+        <div class="nav-links">
+            <a href="/" class="nav-link">➕ New Workout</a>
+            <a href="/view-all-users" class="nav-link" style="color: var(--text-main); background: rgba(255,255,255,0.08);">📊 Admin Dashboard</a>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="dashboard-header">
+            <div class="dashboard-title">
+                <h1>📊 All User Fitness Plans</h1>
+                <p>Overview of all registered users, generated 7-day plans, and AI feedback revisions in SQLite DB.</p>
+            </div>
+            <div class="stat-counter">
+                👥 Total Users: {{ total_users }}
+            </div>
+        </div>
+
+        {% if users_data %}
+        <div class="users-list">
+            {% for item in users_data %}
+            <div class="user-card">
+                <div class="user-card-header">
+                    <div class="user-main-info">
+                        <div class="avatar-small">{{ item.user.username[0] | upper }}</div>
+                        <div class="user-name-id">
+                            <h3>{{ item.user.username }}</h3>
+                            <p>ID: <code>{{ item.user.user_id }}</code></p>
+                        </div>
+                    </div>
+                    <div class="user-meta-tags">
+                        <span class="tag">👤 Age: {{ item.user.age }}</span>
+                        <span class="tag">⚖️ Weight: {{ item.user.weight }} kg</span>
+                        <span class="tag goal-tag">🎯 Goal: {{ item.user.goal }}</span>
+                        <span class="tag">🔥 {{ item.user.intensity }}</span>
+                    </div>
+                </div>
+
+                {% if item.plan %}
+                <div class="plans-accordion">
+                    <!-- Original Plan -->
+                    <div class="plan-box">
+                        <div class="plan-box-title">
+                            <span>🏋️ Original Workout Plan</span>
+                            <span class="badge-mini badge-original">Gemini 1.5 Pro</span>
+                        </div>
+                        <div class="plan-text-preview">
+                            {{ item.plan.original_plan }}
+                        </div>
+                    </div>
+
+                    <!-- Updated Plan or Nutrition Tip -->
+                    <div class="plan-box">
+                        <div class="plan-box-title">
+                            <span>{% if item.plan.updated_plan %}✨ Updated Workout Plan{% else %}⚡ Nutrition & Recovery Tip{% endif %}</span>
+                            <span class="badge-mini {% if item.plan.updated_plan %}badge-updated{% else %}badge-original{% endif %}">
+                                {% if item.plan.updated_plan %}Gemini Revised{% else %}Gemini 1.5 Flash{% endif %}
+                            </span>
+                        </div>
+                        <div class="plan-text-preview">
+                            {% if item.plan.updated_plan %}
+                                {{ item.plan.updated_plan }}
+                            {% elif item.plan.nutrition_tip %}
+                                {{ item.plan.nutrition_tip }}
+                            {% else %}
+                                <em>No revisions submitted yet.</em>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                <p style="color: var(--text-muted); font-size: 0.9rem;"><em>No workout plan record linked to this user.</em></p>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <h3>No Users Found</h3>
+            <p>No user fitness plans have been generated yet.</p>
+            <a href="/" class="nav-link" style="border: 1px solid var(--accent-green); color: var(--accent-green);">Create First Fitness Plan →</a>
+        </div>
+        {% endif %}
+    </main>
+
+    <footer>
+        <p>&copy; 2026 FitBuddy AI. Powered by FastAPI, SQLAlchemy & Google Gemini AI.</p>
+    </footer>
+
+</body>
+</html>
